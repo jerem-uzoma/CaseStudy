@@ -1,17 +1,11 @@
-import requests
-import jenkins
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import jenkins
+import requests
 import datetime
 
 Base = declarative_base()
-
-def connectToJenkins(url, username, password):
-    
-    server = jenkins.Jenkins(url, 
-    username=username, password=password)
-    return server
 
 def initializeDb():
     engine = create_engine('sqlite:///cli.db', echo=False)
@@ -19,7 +13,13 @@ def initializeDb():
     Base.metadata.create_all(engine)
     return session
 
-def addJob(session, jlist):
+def create_Jenkins_conn(url, username, password):
+    
+    server = jenkins.Jenkins(url, 
+    username=username, password=password)
+    return server
+
+def add_Job(session, jlist):
     for j in jlist:
         session.add(j)
     session.commit()
@@ -60,7 +60,7 @@ def createJobList(start, lastBuildNumber, jobName):
 url = 'http://localhost:8080'
 username = raw_input('Enter username: ')
 password = raw_input('Enter password: ')
-server = connectToJenkins(url, username, password)
+server = create_Jenkins_conn(url, username, password)
 
 authenticated = false
 try:
@@ -91,4 +91,6 @@ if authenticated:
         # create a list of unadded job objects
         jlist = createJobList(start, lastBuildNumber, jobName)
         # add job to db
-        addJob(session, jlist)
+        add_
+        
+        Job(session, jlist)
